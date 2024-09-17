@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Blog App</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Header -->
+    <header class="bg-gray-900 text-white p-4 text-center">
+        <h1 class="text-2xl">Personal Blog</h1>
+    </header>
+
+    <!-- Main content -->
+    <main class="container mx-auto mt-8">
+        <!-- Create Post Form -->
+<section id="create-post-section" class="mb-8">
+    <h2 class="text-xl font-bold mb-4">Create New Post</h2>
+    <form id="post-form" class="space-y-4">
+        <div>
+            <input type="text" id="title" placeholder="Post Title" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div>
+            <input type="text" id="author" placeholder="Author" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div>
+            <textarea id="description" placeholder="Post description" class="w-full p-2 border border-gray-300 rounded"></textarea>
+        </div>
+        <div>
+            <button type="submit" class="bg-blue-600 text-white p-2 rounded">Submit</button>
+        </div>
+    </form>
+</section>
+
+<!-- Edit Post Form -->
+<section id="edit-post-section" class="mb-8 hidden">
+    <h2 class="text-xl font-bold mb-4">Edit Post</h2>
+    <form id="edit-form" class="space-y-4">
+        <input type="hidden" id="edit-id">
+        <div>
+            <input type="text" id="edit-title" placeholder="Edit Title" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div>
+            <input type="text" id="edit-author" placeholder="Edit Author" class="w-full p-2 border border-gray-300 rounded">
+        </div>
+        <div>
+            <textarea id="edit-description" placeholder="Edit description" class="w-full p-2 border border-gray-300 rounded"></textarea>
+        </div>
+        <div>
+            <button type="submit" class="bg-green-600 text-white p-2 rounded">Update Post</button>
+            <button id="cancel-edit" class="bg-gray-600 text-white p-2 rounded">Cancel</button>
+        </div>
+    </form>
+</section>
+
+
+        <!-- Blog Posts List -->
+        <section id="posts-section">
+            <h2 class="text-xl font-bold mb-4">All Posts</h2>
+            <div id="posts-container"></div>
+        </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+
+</body>
+</html>
