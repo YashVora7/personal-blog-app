@@ -67,7 +67,8 @@ const blogUpdate = async (req, res) => {
 
 const getById =  async (req, res) => {
   try {
-      const post = await blogModel.findById(req.params.id);
+    const { id } = req.params;
+      const post = await blogModel.findOne({ _id: id, userId : req.userId });
       if (!post) {
           return res.status(404).json({ message: 'Post not found' });
       }

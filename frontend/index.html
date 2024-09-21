@@ -1,71 +1,344 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personal Blog App</title>
     <!-- Tailwind CSS CDN -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100">
-
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
     <!-- Header -->
     <header class="bg-gray-900 text-white p-4 text-center">
-        <h1 class="text-2xl">Personal Blog</h1>
+      <h1 class="text-2xl">Personal Blog</h1>
+      <button id="logout-button" class="bg-red-500 text-white p-2 rounded">
+        Logout
+      </button>
     </header>
 
     <!-- Main content -->
     <main class="container mx-auto mt-8">
-        <!-- Create Post Form -->
-<section id="create-post-section" class="mb-8">
-    <h2 class="text-xl font-bold mb-4">Create New Post</h2>
-    <form id="post-form" class="space-y-4">
-        <div>
-            <input type="text" id="title" placeholder="Post Title" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        <div>
-            <input type="text" id="author" placeholder="Author" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        <div>
-            <textarea id="description" placeholder="Post description" class="w-full p-2 border border-gray-300 rounded"></textarea>
-        </div>
-        <div>
-            <button type="submit" class="bg-blue-600 text-white p-2 rounded">Submit</button>
-        </div>
-    </form>
-</section>
+      <!-- Create Post Form -->
+      <section id="create-post-section" class="mb-8">
+        <h2 class="text-xl font-bold mb-4">Create New Post</h2>
+        <form id="post-form" class="space-y-4">
+          <div>
+            <input
+              type="text"
+              id="title"
+              placeholder="Post Title"
+              class="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              id="author"
+              placeholder="Author"
+              class="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div>
+            <textarea
+              id="description"
+              placeholder="Post description"
+              class="w-full p-2 border border-gray-300 rounded"
+            ></textarea>
+          </div>
+          <div>
+            <button type="submit" class="bg-blue-600 text-white p-2 rounded">
+              Submit
+            </button>
+          </div>
+        </form>
+      </section>
 
-<!-- Edit Post Form -->
-<section id="edit-post-section" class="mb-8 hidden">
-    <h2 class="text-xl font-bold mb-4">Edit Post</h2>
-    <form id="edit-form" class="space-y-4">
-        <input type="hidden" id="edit-id">
-        <div>
-            <input type="text" id="edit-title" placeholder="Edit Title" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        <div>
-            <input type="text" id="edit-author" placeholder="Edit Author" class="w-full p-2 border border-gray-300 rounded">
-        </div>
-        <div>
-            <textarea id="edit-description" placeholder="Edit description" class="w-full p-2 border border-gray-300 rounded"></textarea>
-        </div>
-        <div>
-            <button type="submit" class="bg-green-600 text-white p-2 rounded">Update Post</button>
-            <button id="cancel-edit" class="bg-gray-600 text-white p-2 rounded">Cancel</button>
-        </div>
-    </form>
-</section>
+      <!-- Edit Post Form -->
+      <section id="edit-post-section" class="mb-8 hidden">
+        <h2 class="text-xl font-bold mb-4">Edit Post</h2>
+        <form id="edit-form" class="space-y-4">
+          <input type="hidden" id="edit-id" />
+          <div>
+            <input
+              type="text"
+              id="edit-title"
+              placeholder="Edit Title"
+              class="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              id="edit-author"
+              placeholder="Edit Author"
+              class="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+          <div>
+            <textarea
+              id="edit-description"
+              placeholder="Edit description"
+              class="w-full p-2 border border-gray-300 rounded"
+            ></textarea>
+          </div>
+          <div>
+            <button type="submit" class="bg-green-600 text-white p-2 rounded">
+              Update Post
+            </button>
+            <button id="cancel-edit" class="bg-gray-600 text-white p-2 rounded">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </section>
 
-
-        <!-- Blog Posts List -->
-        <section id="posts-section">
-            <h2 class="text-xl font-bold mb-4">All Posts</h2>
-            <div id="posts-container"></div>
-        </section>
+      <!-- Blog Posts List -->
+      <section id="posts-section">
+        <h2 class="text-xl font-bold mb-4">All Posts</h2>
+        <div id="posts-container"></div>
+      </section>
     </main>
 
-    <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script>
+      // API URL (replace with your backend API URL)
+      const API_URL = "http://localhost:8080/blog/";
 
-</body>
+      // Get the form and post container elements from the DOM
+      const postForm = document.getElementById("post-form");
+      const editForm = document.getElementById("edit-form");
+      const postsContainer = document.getElementById("posts-container");
+      const createPostSection = document.getElementById("create-post-section");
+      const editPostSection = document.getElementById("edit-post-section");
+
+      // Function to fetch posts from the API
+      async function fetchPosts() {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        try {
+          const response = await fetch(API_URL, {
+            headers: { Authorization: `Bearer ${token}` }, // Include the token in the header
+          });
+          const posts = await response.json();
+          renderPosts(posts);
+        } catch (error) {
+          console.error("Error fetching posts:", error);
+          postsContainer.innerHTML =
+            "<p>Failed to load posts. Try again later.</p>";
+        }
+      }
+
+      // Function to render blog posts on the page
+      function renderPosts(posts) {
+        postsContainer.innerHTML = ""; // Clear the current posts
+
+        // Check if there are any posts
+        if (posts.length === 0) {
+          postsContainer.innerHTML = "<p>No blog posts yet. Create one!</p>";
+          return;
+        }
+
+        // Loop through each post and create HTML to display it
+        posts.forEach((post) => {
+          const postElement = document.createElement("div");
+          postElement.classList.add(
+            "bg-white",
+            "p-4",
+            "mb-4",
+            "border",
+            "border-gray-300",
+            "rounded"
+          );
+
+          postElement.innerHTML = `
+                <h3 class="text-lg font-bold mb-2">${post.title}</h3>
+                <p class="text-gray-600 mb-2">By: ${post.author}</p>
+                <p class="text-gray-700 mb-2">${post.description}</p>
+                <div class="flex space-x-2">
+                    <button onclick="editPost('${post._id}')" class="bg-yellow-500 text-white p-1 rounded">Edit</button>
+                    <button onclick="deletePost('${post._id}')" class="bg-red-500 text-white p-1 rounded">Delete</button>
+                </div>
+            `;
+
+          // Append the post element to the posts container
+          postsContainer.appendChild(postElement);
+        });
+      }
+
+      // Handle form submit to create a new post
+      postForm.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Prevent form from submitting to a server
+
+        // Get the values from the form
+        const title = document.getElementById("title").value;
+        const author = document.getElementById("author").value;
+        const description = document.getElementById("description").value;
+
+        if (!title || !author || !description) {
+          alert("Title, author, and description are required!");
+          return;
+        }
+
+        // Create the new post object
+        const newPost = { title, author, description };
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+
+        // Send POST request to create the new post
+        try {
+          const response = await fetch("http://localhost:8080/blog/post", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // Include the token in the header
+            },
+            body: JSON.stringify(newPost),
+          });
+
+          if (response.ok) {
+            fetchPosts(); // Re-fetch and render the posts after the new one is created
+            postForm.reset(); // Clear the form
+          } else {
+            console.error("Failed to create post");
+          }
+        } catch (error) {
+          console.error("Error creating post:", error);
+        }
+      });
+
+      // Function to delete a post
+      async function deletePost(id) {
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+        try {
+          const response = await fetch(
+            `http://localhost:8080/blog/delete/${id}`,
+            {
+              method: "DELETE",
+              headers: {
+                Authorization: `Bearer ${token}`, // Include the token in the header
+              },
+            }
+          );
+
+          if (response.ok) {
+            fetchPosts(); // Re-fetch and render the posts after deletion
+          } else {
+            console.error("Failed to delete post");
+          }
+        } catch (error) {
+          console.error("Error deleting post:", error);
+        }
+      }
+
+      // Function to edit a post (populate the form with existing data)
+      function editPost(id) {
+        const token = localStorage.getItem("token"); // Get the token
+
+        // Fetch the specific post to be edited
+        fetch(`http://localhost:8080/blog/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the header
+            "Content-Type": "application/json",
+          },
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Unauthorized");
+            }
+            return response.json();
+          })
+          .then((post) => {
+            // Populate the edit form with the post data
+            document.getElementById("edit-id").value = post._id;
+            document.getElementById("edit-title").value = post.title;
+            document.getElementById("edit-author").value = post.author;
+            document.getElementById("edit-description").value =
+              post.description;
+
+            // Show the edit form and hide the create form
+            editPostSection.classList.remove("hidden");
+            createPostSection.classList.add("hidden");
+          })
+          .catch((error) =>
+            console.error("Error fetching post for edit:", error)
+          );
+      }
+
+      // Handle edit form submission to update a post
+      editForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById("edit-id").value;
+        const title = document.getElementById("edit-title").value;
+        const author = document.getElementById("edit-author").value;
+        const description = document.getElementById("edit-description").value;
+
+        if (!title || !author || !description) {
+          alert("Title, author, and description are required!");
+          return;
+        }
+
+        const updatedPost = { title, author, description };
+        const token = localStorage.getItem("token"); // Get the token from localStorage
+
+        try {
+          const response = await fetch(
+            `http://localhost:8080/blog/update/${id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the header
+              },
+              body: JSON.stringify(updatedPost),
+            }
+          );
+
+          if (response.ok) {
+            fetchPosts(); // Re-fetch and render the posts after update
+            editForm.reset(); // Clear the form
+            editPostSection.classList.add("hidden"); // Hide the edit form
+            createPostSection.classList.remove("hidden"); // Show the create form again
+          } else {
+            console.error("Failed to update post");
+          }
+        } catch (error) {
+          console.error("Error updating post:", error);
+        }
+      });
+
+      // Handle cancel edit button
+      document.getElementById("cancel-edit").addEventListener("click", (e) => {
+        e.preventDefault();
+        editPostSection.classList.add("hidden");
+        createPostSection.classList.remove("hidden");
+      });
+
+      // Function to handle logout
+      function logout() {
+        localStorage.removeItem("token"); // Remove token from localStorage
+        window.location.reload(); // Reload the page to reset the state
+      }
+
+      // Event listener for logout button
+      document
+        .getElementById("logout-button")
+        .addEventListener("click", logout);
+
+      // Check if the user is logged in by looking for the token
+      function checkAuthentication() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          window.location.href = "login.html"; // Redirect to login if not authenticated
+        }
+      }
+
+      // Call the authentication check on page load
+      checkAuthentication();
+
+      // Fetch posts on initial load
+      fetchPosts();
+    </script>
+  </body>
 </html>
