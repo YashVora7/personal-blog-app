@@ -5,7 +5,9 @@ const blogGet = async (req, res) => {
   // res.send(data)
 
   try {
-    const posts = await blogModel.find({userId : req.userId}).sort({ date: -1 });
+    const posts = await blogModel
+      .find({ userId: req.userId })
+      .sort({ date: -1 });
     res.status(200).json(posts);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch posts" });
@@ -13,12 +15,17 @@ const blogGet = async (req, res) => {
 };
 
 const blogCreate = async (req, res) => {
-    // let data = await blogModel.create(req.body);
-    // res.send(data);
+  // let data = await blogModel.create(req.body);
+  // res.send(data);
 
   const { title, description, author } = req.body;
   try {
-    const newPost = new blogModel({ title, description, author, userId:req.userId });
+    const newPost = new blogModel({
+      title,
+      description,
+      author,
+      userId: req.userId,
+    });
     await newPost.save();
     res.status(201).json(newPost);
   } catch (err) {
@@ -27,13 +34,16 @@ const blogCreate = async (req, res) => {
 };
 
 const blogDelete = async (req, res) => {
-    // let { id } = req.params;
-    // let data = await blogModel.findByIdAndDelete(id);
-    // res.send(data);
+  // let { id } = req.params;
+  // let data = await blogModel.findByIdAndDelete(id);
+  // res.send(data);
 
   const { id } = req.params;
   try {
-    const deletedPost = await blogModel.findByIdAndDelete({_id:id,userId:req.userId});
+    const deletedPost = await blogModel.findByIdAndDelete({
+      _id: id,
+      userId: req.userId,
+    });
     if (!deletedPost) {
       return res.status(404).json({ error: "Post not found" });
     }
@@ -52,7 +62,7 @@ const blogUpdate = async (req, res) => {
   const { title, description, author } = req.body;
   try {
     const updatedPost = await blogModel.findByIdAndUpdate(
-      {_id:id, userId: req.userId},
+      { _id: id, userId: req.userId },
       { title, description, author },
       { new: true }
     );
@@ -65,17 +75,17 @@ const blogUpdate = async (req, res) => {
   }
 };
 
-const getById =  async (req, res) => {
+const getById = async (req, res) => {
   try {
     const { id } = req.params;
-      const post = await blogModel.findOne({ _id: id, userId : req.userId });
-      if (!post) {
-          return res.status(404).json({ message: 'Post not found' });
-      }
-      res.json(post);
+    const post = await blogModel.findOne({ _id: id, userId: req.userId });
+    if (!post) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(post);
   } catch (error) {
-      res.status(500).json({ message: 'Server error' });
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 module.exports = { blogGet, blogCreate, blogDelete, blogUpdate, getById };
