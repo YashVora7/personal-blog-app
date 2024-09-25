@@ -40,7 +40,7 @@ const blogDelete = async (req, res) => {
 
   const { id } = req.params;
   try {
-    const deletedPost = await blogModel.findByIdAndDelete({
+    const deletedPost = await blogModel.findOneAndDelete({
       _id: id,
       userId: req.userId,
     });
@@ -61,7 +61,7 @@ const blogUpdate = async (req, res) => {
   const { id } = req.params;
   const { title, description, author } = req.body;
   try {
-    const updatedPost = await blogModel.findByIdAndUpdate(
+    const updatedPost = await blogModel.findOneAndUpdate(
       { _id: id, userId: req.userId },
       { title, description, author },
       { new: true }
