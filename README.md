@@ -7,7 +7,7 @@ This is the backend for the Personal Blog App. It provides CRUD (Create, Read, U
 - Blog Creation: Users can create blog.
 - Blogs Fetch: Users can fetch or get blogs.
 - Blog Update: Users can update blog.
-- Blog Delete: Users can delete multiple blog at a time.
+- Blog Delete: Users can delete blog.
 
 ## Technologies Used:
 - **Node.js**: JavaScript runtime for building the backend.
