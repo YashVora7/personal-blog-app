@@ -20,6 +20,13 @@ This is the backend for the Personal Blog App. It provides CRUD (Create, Read, U
 
 ## API Endpoints:
 
+### User Routes:
+
+| Method | Endpoint                         | Description                        |
+|--------|----------------------------------|------------------------------------|
+| **POST**    | `/user/login`                    | Login User                      |
+| **POST**     | `/user/register`                    | Register User                  |
+
 ### Blog Routes:
 
 | Method | Endpoint                         | Description                        |
